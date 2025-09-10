@@ -8,11 +8,14 @@ import numpy as np
 # Load model and processor
 processor = AutoImageProcessor.from_pretrained("haywoodsloan/ai-image-detector-deploy")
 model = AutoModelForImageClassification.from_pretrained("haywoodsloan/ai-image-detector-deploy")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
 
 # Function to classify an image
 def detect_image_info(image_path):
     image = Image.open(image_path).convert("RGB")
-    inputs = processor(images=image, return_tensors="pt")
+    inputs = processor(images=image, return_tensors="pt").to(device)
     with torch.no_grad():
         outputs = model(**inputs)
         probs = outputs.logits.softmax(dim=-1)[0]
@@ -30,7 +33,7 @@ def detect_image_info(image_path):
     
 def detect_image(image_path):
     image = Image.open(image_path).convert("RGB")
-    inputs = processor(images=image, return_tensors="pt")
+    inputs = processor(images=image, return_tensors="pt").to(device)
     with torch.no_grad():
         outputs = model(**inputs)
         probs = outputs.logits.softmax(dim=-1)[0]
@@ -38,7 +41,7 @@ def detect_image(image_path):
     
 def detect_frame(frame):
     image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-    inputs = processor(images=image, return_tensors="pt")
+    inputs = processor(images=image, return_tensors="pt").to(device)
     with torch.no_grad():
         outputs = model(**inputs)
         probs = outputs.logits.softmax(dim=-1)[0]
