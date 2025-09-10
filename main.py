@@ -1,6 +1,7 @@
 from transformers import AutoImageProcessor, AutoModelForImageClassification
 from PIL import Image
 import torch
+import sys
 
 # Load model and processor
 processor = AutoImageProcessor.from_pretrained("haywoodsloan/ai-image-detector-deploy")
@@ -27,7 +28,7 @@ def detect_image(image_path):
 
 # Example usage
 if __name__ == "__main__":
-    result = detect_image("path/to/your/file.jpg")
+    result = detect_image(sys.argv[1])
     print("Prediction:", result["prediction"])
     print("Confidence:", result["confidence"])
     print("Detailed scores:", result["scores"])
